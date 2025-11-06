@@ -1,4 +1,4 @@
-CREATE TABLE competitions (
+CREATE TABLE staging_competitions (
     competition_id VARCHAR(30) PRIMARY KEY,
     competition_code VARCHAR(100),
     competition_name VARCHAR(100),
@@ -12,7 +12,7 @@ CREATE TABLE competitions (
     is_major_national_league BOOLEAN
 );
 
-CREATE TABLE clubs (
+CREATE TABLE staging_clubs (
     club_id VARCHAR(10),
 	club_code VARCHAR(100),
 	club_name VARCHAR(100),
@@ -33,7 +33,7 @@ CREATE TABLE clubs (
 	PRIMARY KEY (club_id)
 );
 
-CREATE TABLE players (
+CREATE TABLE staging_players (
 	player_id VARCHAR(30),
 	first_name VARCHAR(50),
 	last_name VARCHAR(50),
@@ -59,19 +59,19 @@ CREATE TABLE players (
 	highest_market_value_in_eur numeric(50),
 	PRIMARY KEY (player_id),
 	FOREIGN KEY (current_club_id)
-		REFERENCES clubs(club_id),
+		REFERENCES staging_clubs(club_id),
 	FOREIGN KEY (current_club_domestic_competition_id)
-		REFERENCES competitions(competition_id)
+		REFERENCES staging_competitions(competition_id)
 );
 
-CREATE TABLE games (
+CREATE TABLE staging_games (
 	game_id VARCHAR(10),
 	competition_id VARCHAR(30) NOT NULL,
 	game_season VARCHAR(30),
 	game_round VARCHAR(30),
 	game_date DATE,
-	home_club_id VARCHAR(10) REFERENCES clubs(club_id),
-	away_club_id VARCHAR(10) REFERENCES clubs(club_id),
+	home_club_id VARCHAR(10) REFERENCES staging_clubs(club_id),
+	away_club_id VARCHAR(10) REFERENCES staging_clubs(club_id),
 	home_club_goals INTEGER,
 	away_club_goals INTEGER,
 	home_club_position INT,
@@ -90,13 +90,13 @@ CREATE TABLE games (
 	competition_type VARCHAR(100),
 	PRIMARY KEY (game_id),
 	FOREIGN KEY (competition_id)
-		REFERENCES competitions(competition_id)
+		REFERENCES staging_competitions(competition_id)
 );
 
-CREATE TABLE game_lineups (
+CREATE TABLE staging_game_lineups (
 	game_lineups_id VARCHAR(100),
 	game_date DATE,
-	game_id VARCHAR(10) REFERENCES games(game_id),
+	game_id VARCHAR(10) REFERENCES staging_games(game_id),
 	player_id VARCHAR(30) NOT NULL,
 	club_id VARCHAR(30) NOT NULL,
 	player_name VARCHAR(100),
@@ -106,36 +106,36 @@ CREATE TABLE game_lineups (
 	team_captain BOOLEAN,
 	PRIMARY KEY (game_lineups_id),
 	FOREIGN KEY (player_id)
-		REFERENCES players(player_id),
+		REFERENCES staging_players(player_id),
 	FOREIGN KEY (club_id)
-		REFERENCES clubs(club_id)
+		REFERENCES staging_clubs(club_id)
 );
 
-CREATE TABLE game_events (
+CREATE TABLE staging_game_events (
 	game_event_id VARCHAR(100),
 	game_date DATE,
 	game_id VARCHAR(10) NOT NULL,
 	event_minute INT,
 	event_type VARCHAR(50),
-	club_id VARCHAR(30) REFERENCES clubs(club_id),
+	club_id VARCHAR(30) REFERENCES staging_clubs(club_id),
 	player_id VARCHAR(30) NOT NULL,
 	description VARCHAR(100),
-	player_in_id VARCHAR(30) REFERENCES players(player_id),
-	player_assist_id VARCHAR(30) REFERENCES players(player_id),
+	player_in_id VARCHAR(30) REFERENCES staging_players(player_id),
+	player_assist_id VARCHAR(30) REFERENCES staging_players(player_id),
 	PRIMARY KEY (game_event_id),
 	FOREIGN KEY (player_id)
-		REFERENCES players(player_id),
+		REFERENCES staging_players(player_id),
 	FOREIGN KEY (game_id)
-		REFERENCES games(game_id)
+		REFERENCES staging_games(game_id)
 );
 
-CREATE TABLE club_games (
+CREATE TABLE staging_club_games (
 	game_id VARCHAR(10) NOT NULL,
 	club_id VARCHAR(10) NOT NULL,
 	own_goals INT,
 	own_position INT,
 	own_manager_name VARCHAR(100),
-	opponent_id VARCHAR(10) REFERENCES clubs(club_id),
+	opponent_id VARCHAR(10) REFERENCES staging_clubs(club_id),
 	opponent_goals INT,
 	opponent_position INT,
 	opponent_manager_name VARCHAR(100),
@@ -143,17 +143,17 @@ CREATE TABLE club_games (
 	is_win BOOLEAN,
 	PRIMARY KEY (game_id, club_id),
 	FOREIGN KEY (game_id)
-		REFERENCES games(game_id),
+		REFERENCES staging_games(game_id),
 	FOREIGN KEY (club_id)
-		REFERENCES clubs(club_id)
+		REFERENCES staging_clubs(club_id)
 );
 
-CREATE TABLE appearances (
+CREATE TABLE staging_appearances (
 	appearance_id VARCHAR(50),
-	game_id VARCHAR(10) REFERENCES games(game_id),
+	game_id VARCHAR(10) REFERENCES staging_games(game_id),
 	player_id VARCHAR(30) NOT NULL,
-	player_club_id VARCHAR(10) REFERENCES clubs(club_id),
-	player_current_club_id VARCHAR(10) REFERENCES clubs(club_id),
+	player_club_id VARCHAR(10) REFERENCES staging_clubs(club_id),
+	player_current_club_id VARCHAR(10) REFERENCES staging_clubs(club_id),
 	appearances_date DATE,
 	player_name VARCHAR(100),
 	competition_id VARCHAR(30) NOT NULL,
@@ -164,17 +164,17 @@ CREATE TABLE appearances (
 	minutes_played INT,
 	PRIMARY KEY (appearance_id),
 	FOREIGN KEY (player_id)
-		REFERENCES players(player_id),
+		REFERENCES staging_players(player_id),
 	FOREIGN KEY (competition_id)
-		REFERENCES competitions(competition_id)
+		REFERENCES staging_competitions(competition_id)
 );
 
-CREATE TABLE played (
+CREATE TABLE staging_played (
 	player_id VARCHAR(30),
 	game_id VARCHAR(10),
 	PRIMARY KEY (player_id, game_id),
 	FOREIGN KEY (player_id)
-		REFERENCES players(player_id),
+		REFERENCES staging_players(player_id),
 	FOREIGN KEY (game_id)
-		REFERENCES games(game_id)
+		REFERENCES staging_games(game_id)
 );

@@ -104,26 +104,74 @@ def search_data(conn):
     try:
         cur = conn.cursor()
 
-        table_name = input("Table to search the data from: ")
-        condition = input("Condition for searching (blank if WHERE clause is not desired): ")
+        # Show available tables
+        cur.execute("""
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_type = 'BASE TABLE'
+        """)
+        tables = cur.fetchall()
+        
+        print("\nAvailable tables:")
+        for table in tables:
+            print(f"- {table[0]}")
+        print()
 
-        if (table_name or condition) == "abort" :
+        table_name = input("Select the table to search from: ")
+        
+        if table_name not in [t[0] for t in tables]:
             print("Aborted")
-        else :
-            if condition:
-                query = f"SELECT * FROM {table_name} WHERE {condition}"
-            else:
-                query = f"SELECT * FROM {table_name}"
+            return
 
+        # Show available columns in the selected table
+        cur.execute(f"""
+            SELECT column_name, data_type 
+            FROM information_schema.columns 
+            WHERE table_name = '{table_name}'
+        """)
+        columns = cur.fetchall()
+        
+        if columns:
+            print(f"\nAvailable fields in {table_name}:")
+            for col in columns:
+                print(f"- {col[0]}")
+            print()
+        
+        field_name = input("Field to search (blank for selecting all fields): ")
+
+        if field_name and field_name not in [c[0] for c in columns]:
+            print(f"Error: Field '{field_name}' does not exist in table '{table_name}'")
+            return
+        
+        # Construct the search query
+        if field_name == "":
+            query = f"SELECT * FROM {table_name}"
             cur.execute(query)
-            rows = cur.fetchall()
-
-            if rows:
-                print("Search results:")
-                for row in rows:
-                    print(row)
-            else:
-                print("No matching records found")
+        else:
+            print("\nAvailable operators: =, >, <, >=, <=, !=, LIKE")
+            operator = input("Enter operator: ").strip().upper()
+            
+            # Validate operator
+            valid_operators = ['=', '>', '<', '>=', '<=', '!=', 'LIKE']
+            if operator not in valid_operators:
+                print("Invalid operator")
+                return
+                
+            value = input("Enter search value: ")
+            
+            # Use parameterized query to prevent SQL injection
+            query = f"SELECT * FROM {table_name} WHERE {field_name} {operator} %s"
+            cur.execute(query, (value,))
+            
+        rows = cur.fetchall()
+        
+        if rows:
+            print("\nSearch results:")
+            for row in rows:
+                print(row)
+        else:
+            print("\nNo matching records found")
     except psycopg2.Error as e:
         print("Error searching data")
         print(e)

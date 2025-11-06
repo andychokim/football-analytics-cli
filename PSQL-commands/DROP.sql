@@ -1,0 +1,9 @@
+DROP TABLE staging_competitions;
+DROP TABLE staging_clubs;
+DROP TABLE staging_players;
+DROP TABLE staging_games;
+DROP TABLE staging_game_lineups;
+DROP TABLE staging_game_events;
+DROP TABLE staging_club_games;
+DROP TABLE staging_appearances;
+DROP TABLE staging_played;
