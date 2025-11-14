@@ -38,7 +38,7 @@ CREATE TABLE staging_players (
 	first_name VARCHAR(50),
 	last_name VARCHAR(50),
 	player_name VARCHAR(100),
-	last_season VARCHAR(30),
+	last_season INTEGER,
 	current_club_id VARCHAR(10) NOT NULL,
 	player_code VARCHAR(100),
 	country_of_birth VARCHAR(50),

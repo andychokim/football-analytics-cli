@@ -29,8 +29,8 @@ INSERT INTO clubs (club_id, club_name, competition_id, squad_size, stadium_name)
 SELECT club_id, club_name, domestic_competition_id, squad_size, stadium_name
 FROM staging_clubs;
 
-INSERT INTO players (player_id, player_name, current_club_id, date_of_birth, sub_position, player_position, current_club_domestic_competition_id)
-SELECT player_id, player_name, current_club_id, date_of_birth, sub_position, player_position, current_club_domestic_competition_id
+INSERT INTO players (player_id, player_name, last_season, current_club_id, date_of_birth, sub_position, player_position, current_club_domestic_competition_id)
+SELECT player_id, player_name, last_season, current_club_id, date_of_birth, sub_position, player_position, current_club_domestic_competition_id
 FROM staging_players;
 
 INSERT INTO games (game_id, competition_id, game_date, home_club_id, away_club_id, home_club_goals, away_club_goals, stadium_name, game_attendance)

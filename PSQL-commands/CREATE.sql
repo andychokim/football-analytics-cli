@@ -29,6 +29,7 @@ CREATE TABLE clubs (
 CREATE TABLE players (
 	player_id VARCHAR(255) PRIMARY KEY,
 	player_name VARCHAR(255),
+    last_season INTEGER,
 	current_club_id VARCHAR(255) NOT NULL,
 	date_of_birth DATE,
 	sub_position VARCHAR(255),
