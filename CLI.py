@@ -3,7 +3,7 @@ import getpass
 
 from DML import (
     create_data, delete_data, update_data,
-    search_data,
+    read_data,
     aggregate_functions, sorting, grouping,
     joins, subqueries,
 )
@@ -36,9 +36,9 @@ def main():
             print("\nWelcome to my CLI interface\n")
             print("Please select an option:")
             print("0. Create Data")
-            print("1. Update Data")
-            print("2. Delete Data")
-            print("3. Search Data")
+            print("1. Read Data")
+            print("2. Update Data")
+            print("3. Delete Data")
             print("4. Aggregate Functions")
             print("5. Sorting")
             print("6. Joins")
@@ -51,11 +51,11 @@ def main():
                 case '0':
                     create_data(connection)
                 case '1':
-                    update_data(connection)
+                    read_data(connection)
                 case '2':
-                    delete_data(connection)
+                    update_data(connection)
                 case '3':
-                    search_data(connection)
+                    delete_data(connection)
                 case '4':
                     aggregate_functions(connection)
                 case '5':

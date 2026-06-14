@@ -3,7 +3,7 @@ import psycopg2
 from .utils import fetch_query, GENERIC_QUERIES
 
 
-def search_data(connection):
+def read_data(connection):
     try:
         tables = fetch_query(connection, GENERIC_QUERIES['get_tables'])
         if not tables:

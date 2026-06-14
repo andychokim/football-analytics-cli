@@ -70,6 +70,15 @@ def subqueries(connection):
             print("Successfully entered a transaction.")
             print("To abort the current transaction at any time, type \"!a\".")
 
+            # Provide options for different types of subqueries to guide the user in writing the correct query
+            subquery_types = ["1. IN subquery", "2. Aggregate comparison subquery"]
+            print(f"\nSubquery types: \n{', '.join(subquery_types)}")
+
+            subquery_type = input("Select subquery type (1 or 2):\n").strip()
+            if subquery_type == "!a":
+                print("Aborted")
+                return
+
             # Fetch available tables to provide options for the user
             tables = fetch_query(connection, GENERIC_QUERIES['get_tables'])
             print(f"\nAvailable tables: \n{', '.join([t[0] for t in tables])}")
@@ -104,18 +113,41 @@ def subqueries(connection):
                 print("Aborted")
                 return
 
-            subquery = f"SELECT {sub_column} FROM {sub_table}"
-            main_query = f"SELECT * FROM {main_table} WHERE {main_column} IN ({subquery})"
+            if subquery_type == "1":
+                query = f"SELECT * FROM {main_table} WHERE {main_column} IN (SELECT {sub_column} FROM {sub_table})"
+            
+            elif subquery_type == "2":
 
-            cursor.execute(main_query)
-            main_result = cursor.fetchall()
+                agg_functions = ["AVG", "MAX", "MIN", "SUM"]
+                print(f"\nAggregate functions: \n{', '.join(agg_functions)}")
 
-            if main_result:
-                print("Main Query Result:")
-                for row in main_result:
+                agg_func = input("Aggregate function for the subquery:\n").strip().upper()
+                if agg_func == "!A":
+                    print("Aborted")
+                    return
+                
+                operator_options = [">", "<", ">=", "<=", "="]
+                print(f"\nOperators: \n{', '.join(operator_options)}")
+
+                operator = input("Comparison operator:\n").strip()
+                if operator == "!a":
+                    print("Aborted")
+                    return
+                
+                query = f"SELECT * FROM {main_table} WHERE {main_column} {operator} (SELECT {agg_func}({sub_column}) FROM {sub_table})"
+            else:
+                print("Invalid subquery type. Aborted")
+                return
+
+            cursor.execute(query)
+            result = cursor.fetchall()
+
+            if result:
+                print("Query result:")
+                for row in result:
                     print(row)
             else:
-                print("Main query returned no results")
+                print("Query returned no results")
 
     except psycopg2.Error as e:
         connection.rollback()

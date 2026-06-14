@@ -113,7 +113,44 @@ def grouping(connection):
                 print("Aborted")
                 return
 
-            query = f"SELECT {column_name}, COUNT(*) FROM {table_name} GROUP BY {column_name}"
+            agg_functions = ["SUM", "AVG", "COUNT", "MIN", "MAX"]
+            print(f"\nAggregate functions: \n{', '.join(agg_functions)}")
+
+            agg_func = input("Aggregate function to apply (used in SELECT and HAVING):\n").strip().upper()
+            if agg_func == "!A":
+                print("Aborted")
+                return
+
+            print(f"\nAvailable columns in {table_name}: \n{columns}")
+            agg_column = input("Column to apply the aggregate function on (use * for COUNT(*)):\n").strip()
+            if agg_column == "!a":
+                print("Aborted")
+                return
+
+            having_input = input("Add a HAVING clause? (y/n):\n").strip().lower()
+            if having_input == "!a":
+                print("Aborted")
+                return
+
+            if having_input == "y":
+
+                operator_options = [">", "<", ">=", "<=", "="]
+                print(f"\nOperators: \n{', '.join(operator_options)}")
+
+                operator = input("Comparison operator:\n").strip()
+                if operator == "!a":
+                    print("Aborted")
+                    return
+                
+                having_value = input("Value to compare against:\n")
+                if having_value == "!a":
+                    print("Aborted")
+                    return
+                
+                query = f"SELECT {column_name}, {agg_func}({agg_column}) FROM {table_name} GROUP BY {column_name} HAVING {agg_func}({agg_column}) {operator} {having_value}"
+            else:
+                query = f"SELECT {column_name}, {agg_func}({agg_column}) FROM {table_name} GROUP BY {column_name}"
+
             cursor.execute(query)
             rows = cursor.fetchall()
 
