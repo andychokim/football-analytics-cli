@@ -26,6 +26,11 @@ CREATE TABLE clubs (
     FOREIGN KEY (stadium_name) REFERENCES stadiums(stadium_name)
 );
 
+CREATE TABLE positions (
+    sub_position VARCHAR(255) PRIMARY KEY,
+    position VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE players (
 	player_id VARCHAR(255) PRIMARY KEY,
 	player_name VARCHAR(255),
@@ -33,10 +38,10 @@ CREATE TABLE players (
 	current_club_id VARCHAR(255) NOT NULL,
 	date_of_birth DATE,
 	sub_position VARCHAR(255),
-	player_position VARCHAR(255),
 	current_club_domestic_competition_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (current_club_id) REFERENCES clubs(club_id),
-    FOREIGN KEY (current_club_domestic_competition_id) REFERENCES competitions(competition_id)
+    FOREIGN KEY (current_club_domestic_competition_id) REFERENCES competitions(competition_id),
+    FOREIGN KEY (sub_position) REFERENCES positions(sub_position)
 );
 
 CREATE TABLE games (
@@ -56,7 +61,7 @@ CREATE TABLE games (
 );
 
 CREATE TABLE game_lineups (
-    game_lineups_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    game_lineups_id VARCHAR(255) PRIMARY KEY,
     game_id VARCHAR(255) NOT NULL,
     player_id VARCHAR(255) NOT NULL,
     club_id VARCHAR(255) NOT NULL,
