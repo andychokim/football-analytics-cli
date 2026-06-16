@@ -20,6 +20,13 @@ GENERIC_QUERIES = {
     'search_all': "SELECT * FROM {table}",
 
     'search_data': "SELECT * FROM {table} WHERE {field} {operator} {value}",
+
+    'join_query': """
+        SELECT {columns}
+        FROM {table1}
+        {join_type} {table2}
+        ON {join_condition}
+    """,
 }
 
 

@@ -1,6 +1,6 @@
-# CMPSC431W-CLI
+# Football-CLI
 
-A Python-based Command-Line Interface (CLI) for managing a relational PostgreSQL database seeded with real-world European football data. Built for CMPSC 431W — Database Management Systems.
+A Python-based Command-Line Interface (CLI) for managing a relational PostgreSQL database seeded with real-world European football data. Built for CMPSC 431W — Database Management Systems originally.
 
 ## Project Background
 
@@ -8,9 +8,9 @@ This was an academic project with the following requirements:
 - Source a real-world dataset from Kaggle
 - Normalize the schema to Third Normal Form (3NF)
 - Load the data into PostgreSQL via a staged ETL pipeline
-- Build a non-engineer-friendly CLI supporting 10 DML/query operations
+- Build a non-engineer-friendly CLI supporting basic query operations
 
-The source dataset was a European football dataset from Kaggle (transfermarkt). It was already largely normalized, but two transitive dependencies were identified and resolved by introducing new tables — see [Normalization Decisions](#normalization-decisions).
+The source dataset was a European football dataset from Kaggle (transfermarkt). The CSV files had three transitive dependencies which I resolved: countries, stadiums, and positions — see [Normalization Decisions](#normalization-decisions).
 
 ## Features
 

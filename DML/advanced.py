@@ -25,26 +25,43 @@ def joins(connection):
             # Fetch columns from both tables to guide the user in writing the join condition
             columns1 = fetch_query(connection, GENERIC_QUERIES['get_table_columns'].format(table=table1_name))
             print(f"\nAvailable columns in {table1_name}: \n{columns1}")
+            columns1_name = input("Columns from the first table to select (e.g., table1.column1, table1.column2) (comma separated, blank for all columns):\n")
+            if columns1_name == "!a":
+                print("Aborted")
+                return
+
             columns2 = fetch_query(connection, GENERIC_QUERIES['get_table_columns'].format(table=table2_name))
             print(f"\nAvailable columns in {table2_name}: \n{columns2}")
+            columns2_name = input("Columns from the second table to select (e.g., table2.column1, table2.column2) (comma separated, blank for all columns):\n")
+            if columns2_name == "!a":
+                print("Aborted")
+                return
 
+            # Determine the type of join and the join condition based on user input
             join_type = input("Join type: (JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN): ").strip().upper()
             if join_type == "!A":
                 print("Aborted")
                 return
+            
             join_condition = input("Join condition (Ex: table1.[column] = table2.[column]): ")
             if join_condition == "!a":
                 print("Aborted")
                 return
 
-            if join_type == 'JOIN':
-                query = f"SELECT * FROM {table1_name} INNER JOIN {table2_name} ON {join_condition}"
-            elif join_type == 'LEFT JOIN':
-                query = f"SELECT * FROM {table1_name} LEFT JOIN {table2_name} ON {join_condition}"
-            elif join_type == 'RIGHT JOIN':
-                query = f"SELECT * FROM {table1_name} RIGHT JOIN {table2_name} ON {join_condition}"
-            elif join_type == 'FULL OUTER JOIN':
-                query = f"SELECT * FROM {table1_name} FULL OUTER JOIN {table2_name} ON {join_condition}"
+            if join_type in ["JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"]:
+                if not columns1_name and not columns2_name:
+                    col_clause = "*"
+                else:
+                    cols1 = columns1_name if columns1_name else f"{table1_name}.*"
+                    cols2 = columns2_name if columns2_name else f"{table2_name}.*"
+                    col_clause = f"{cols1}, {cols2}"
+                query = GENERIC_QUERIES['join_query'].format(
+                    columns=col_clause,
+                    table1=table1_name,
+                    join_type=join_type,
+                    table2=table2_name,
+                    join_condition=join_condition
+                )
             else:
                 print("Wrong join type. Aborted")
                 return
